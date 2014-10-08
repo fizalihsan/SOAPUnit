@@ -68,7 +68,7 @@ def beforeFile = new File("C:\\SOAPUnit\\BEFORE_123.xml")
 def afterFile = new File("C:\\SOAPUnit\\AFTER_123.xml")
 def stubClass = GetWeatherInformationResponse.class
 def collectionElementSortKeyMap = ["WeatherDescription": "WeatherID"]
-def compare = new SOAPResponseCompare(stubClass: GetWeatherInformationResponse.class, collectionElementSortKeyMap: collectionElementSortKeyMap)
+def compare = new SOAPResponseCompare(stubClass: stubClass, collectionElementSortKeyMap: collectionElementSortKeyMap)
 
 this.compare {
     compare.compareFiles(beforeFile, afterFile)

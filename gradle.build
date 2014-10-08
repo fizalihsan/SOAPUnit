@@ -1,0 +1,13 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repo.spring.io/libs-release' }
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.2.2'
+}

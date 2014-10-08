@@ -54,7 +54,7 @@ For example, the below message says there is a difference in <description> under
 
 ```
 Mismatch found in field 'description'. . Expression: (pre == post). Values: pre = Rainy, post = Rain
-Not identical - Mismatch found at : getWeatherInformationResult > weatherDescription > 5 > description > getWeatherInformationResult > weatherDescription > 5 > description > 
+Not identical - Mismatch found at : getWeatherInformationResult > weatherDescription > 5 > description > 
 ```
 
 ## Sample Usage

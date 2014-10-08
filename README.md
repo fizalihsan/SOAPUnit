@@ -70,10 +70,12 @@ def stubClass = GetWeatherInformationResponse.class
 def collectionElementSortKeyMap = ["WeatherDescription": "WeatherID"]
 def compare = new SOAPResponseCompare(stubClass: stubClass, collectionElementSortKeyMap: collectionElementSortKeyMap)
 
+//Example on comparing XML files
 this.compare {
     compare.compareFiles(beforeFile, afterFile)
 }
 
+//Example on comparing JAXB objects
 this.compare {
     def beforeObject = JAXBUtil.xmlFileToJAXBObject(beforeFile, stubClass)
     def afterObject = JAXBUtil.xmlFileToJAXBObject(afterFile, stubClass)

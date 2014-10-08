@@ -155,8 +155,8 @@ class SOAPResponseCompare {
      * Generic implementation of Java Comparator
      */
     private static final def GENERIC_COMPARATOR = { property, pre, post ->
-        throwIfTrue !pre?.hasProperty(property), "Pre does not have property: $property"
-        throwIfTrue !post?.hasProperty(property), "Post does not have property: $property"
+        throwIfTrue !pre?.hasProperty(property), "${pre} does not have property: $property"
+        throwIfTrue !post?.hasProperty(property), "${post} does not have property: $property"
         throwIfTrue pre?.getClass() != post?.getClass(), "Pre & Post should be of same type. Pre = '${pre}', Post = '${post}'"
 
         def a1 = pre?.properties[property]

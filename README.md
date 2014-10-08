@@ -2,7 +2,7 @@ SOAPUnit
 ========
 
 ##Overview
-Groovy based utility program to compare SOAP web service responses. This comes very handy especially during unit testing and regression testing.
+Groovy based utility program to compare SOAP web service responses. This comes very handy especially during automated unit testing and regression testing.
 
 ## Features
 

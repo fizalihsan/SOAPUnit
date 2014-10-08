@@ -7,7 +7,9 @@ Groovy based utility program to compare SOAP web service responses. This comes v
 ## Features
 
 ### Compares JAXB objects or XML files
-Clients can compare either 2 JAXB objects or 2 XML files. If the input is an XML file, it automatically converts into a JAXB object. The input object is considered a JAXB object only if it is annotated with [@XmlRootElement](http://docs.oracle.com/javase/7/docs/api/javax/xml/bind/annotation/XmlRootElement.html). 
+It can compare either 2 JAXB objects or 2 XML files. If the input is an XML file, it converts it into a JAXB object. 
+
+The input JAXB object is considered valid only if it is annotated with [@XmlRootElement](http://docs.oracle.com/javase/7/docs/api/javax/xml/bind/annotation/XmlRootElement.html). 
 
 ### Compares collection of elements in different order
 

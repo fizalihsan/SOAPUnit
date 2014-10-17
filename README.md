@@ -13,7 +13,7 @@ The input JAXB object is considered valid only if it is annotated with [@XmlRoot
 
 ### Compares collection of elements in different order
 
-If the responses have collection of elements that appear in different order, then a sorting order can be provided so that the comparison doesn't fail.
+If the responses have collection of elements that appear in different order, then a sorting order can be provided to compare regardless of the order of elements.
 
 Consider the below response below. 
 
@@ -37,12 +37,10 @@ Consider the below response below.
 <GetWeatherInformationResult>
 ```
 
-If you have another response with the same <weatherDescription> elements but in different order, you can let the tool know to sort them by say <WeatherID> before comparison.
-
-Here is how you do that:
+In order to sort <weatherDescription> elements by <weatherID> and <Description> fields, try this:
 
 ```groovy
-def collectionElementSortKeyMap = ["WeatherDescription": "WeatherID"]
+def collectionElementSortKeyMap = ["WeatherDescription": ["WeatherID", "Description"]]
 def compare = new SOAPResponseCompare(stubClass: GetWeatherInformationResponse.class, collectionElementSortKeyMap: collectionElementSortKeyMap)
 ```
 

@@ -15,7 +15,7 @@ class SOAPResponseCompare {
     // before comparing it has to be sorted first by a sub-element of <Client> like <name>.
     private Map<String, String> collectionElementSortKeyMap = [:]
 
-    private def validateFiles(File beforeFile, File afterFile) {
+    private static def validateFiles(File beforeFile, File afterFile) {
         throwIfNull beforeFile, "beforeFile cannot be null"
         throwIfNull afterFile, "afterFile cannot be null"
         throwIfTrue(!beforeFile.exists() || !beforeFile.isFile(), "beforeFile either not exists or not a file")
@@ -30,7 +30,7 @@ class SOAPResponseCompare {
      */
     def compareFiles(File beforeFile, File afterFile) {
         validateFiles(beforeFile, afterFile)
-        println "Comparing files '${beforeFile}' & '${afterFile}'"
+//        println "Comparing files '${beforeFile}' & '${afterFile}'"
 
         def beforeObject = JAXBUtil.xmlFileToJAXBObject(beforeFile, stubClass)
         def afterObject = JAXBUtil.xmlFileToJAXBObject(afterFile, stubClass)
@@ -48,7 +48,7 @@ class SOAPResponseCompare {
         JAXBUtil.throwIfNotJAXBStubClass(stubClass)
         throwIfNull beforeObject, "beforeObject cannot be null"
         throwIfNull afterObject, "afterObject cannot be null"
-        println "Comparing root element in stub objects "
+//        println "Comparing root element in stub objects "
         checkSortKeyMap()
 
         try {
@@ -59,6 +59,7 @@ class SOAPResponseCompare {
                 differenceAt << element << " > "
             }
             println e.message
+            e.printStackTrace()
             throw new ComparisonException(mismatchAt: differenceAt, rootCause: e)
         }
     }
@@ -75,8 +76,8 @@ class SOAPResponseCompare {
 
             collectionElementSortKeyMap.each { key, value ->
                 throwIfTrue !(key instanceof String), "collectionElementSortKeyMap key should be String"
-                throwIfTrue !(value instanceof String), "collectionElementSortKeyMap value should be String"
-                newMap[firstCharToLowerCase(key)] = firstCharToLowerCase(value)
+                throwIfTrue !(value instanceof Collection), "collectionElementSortKeyMap value should be String"
+                newMap[key] = value
             }
 
             collectionElementSortKeyMap = newMap
@@ -122,6 +123,7 @@ class SOAPResponseCompare {
                     pre = pre.sort()
                     post = post.sort()
                 }
+
                 for (int i = 0; i < pre.size(); i++) {
                     tagStack.push(i + 1)
                     recursiveCompare pre[i], post[i]
@@ -152,16 +154,41 @@ class SOAPResponseCompare {
     // ---------------------- Utility methods ----------------------
 
     /**
+     * Reads the field value from given object
+     * @param object
+     * @param field
+     * @return
+     */
+    private static final def readField(def object, def field){
+        object?.@"$field"
+    }
+
+    /**
      * Generic implementation of Java Comparator
      */
-    private static final def GENERIC_COMPARATOR = { property, pre, post ->
-        throwIfTrue !pre?.hasProperty(property), "${pre} does not have property: $property"
-        throwIfTrue !post?.hasProperty(property), "${post} does not have property: $property"
+    private static final def GENERIC_COMPARATOR = { properties, pre, post ->
+        properties.each { property ->
+            throwIfTrue !pre?.hasProperty(property), "${pre} does not have property: $property "
+            throwIfTrue !post?.hasProperty(property), "${post} does not have property: $property "
+        }
+
+        throwIfTrue properties.isEmpty(), "${pre} does not have any sortable property"
         throwIfTrue pre?.getClass() != post?.getClass(), "Pre & Post should be of same type. Pre = '${pre}', Post = '${post}'"
 
-        def a1 = pre?.properties[property]
-        def b1 = post?.properties[property]
-        a1 == null ? (b1 == null ? 0 : Integer.MIN_VALUE) : (a1 == null ? Integer.MAX_VALUE : a1.compareTo(b1))
+        for (int i = 0; i < properties.size(); i++) {
+            def a0 = readField pre, properties[i]
+            def b0 = readField post, properties[i]
+            int result = trim(a0) <=> trim(b0)
+
+            if(result != 0) {
+                return result
+            }
+        }
+        return 0
+    }
+
+    private def static trim(def val){
+        (val != null && (val instanceof String)) ? val.trim() : val
     }
 
     /**
@@ -188,20 +215,7 @@ class SOAPResponseCompare {
      * @param errorMessage
      */
     private def static throwIfTrue(boolean condition, def errorMessage) {
-        if (condition) throw new RuntimeException(errorMessage)
+        if (condition) throw new RuntimeException(errorMessage.toString())
     }
 
-    /**
-     * 1. If input is null, return null
-     * 2. If input is "", return null
-     * 3. If input is "a" or "A", return "a"
-     * 4. If input is "ClientDetails" or "clientDetalis", return "clientDetails"
-     * @param string
-     * @return
-     */
-    private def static firstCharToLowerCase(String string){
-        if (!string || string.isEmpty()) string
-        else if (string.length() == 1) string.toLowerCase()
-        else string[0]?.toLowerCase() + string?.substring(1)
-    }
 }

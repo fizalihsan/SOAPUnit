@@ -11,15 +11,17 @@ import javax.xml.transform.stream.StreamSource
  */
 class JAXBUtil {
     /**
-     * Parses the XMl file given and converts into a JAXB Object
+     * Parses the XML file given and converts into a JAXB Object
      * @param xmlFile
-     * @param stubClass
-     * @param tagName
+     * @param stubClass should be a JAXB class annotated with @XmlRootElement
      * @return
      * @throws Exception
      */
     static def xmlFileToJAXBObject(File xmlFile, Class stubClass) throws Exception {
-        throwIfNotJAXBStubClass(stubClass)
+        //If the input stub class is not JAXB class (annotated with @XmlRootElement), throw exception
+        if (!isJAXBStubClass(stubClass)) {
+            throw new  RuntimeException("Invalid JAXB stub ${stubClass} passed. Class expected to have annotation XmlRootElement ")
+        }
 
         def tagName = getRootElement(stubClass)
         def reader = XMLInputFactory.newFactory().createXMLStreamReader(new StreamSource(xmlFile))
